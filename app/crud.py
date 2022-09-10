@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import func
 
 from . import models, schemas
 
@@ -7,7 +8,7 @@ def get_securities(db: Session, skip: int = 0, limit: int = 100 ):
 
 def get_security(db: Session, security_id : str, limit: int = 100):
     # return db.query(models.Security).filter(models.Security.security_id == security_id).first()
-    return db.query(models.Security).filter(models.Security.security_id.contains(security_id)).limit(limit).all()
+    return db.query(models.Security).filter(models.Security.security_id.ilike('%{}%'.format(security_id))).limit(limit).all()
 
 
 # def get_user_by_email(db: Session, email: str):
