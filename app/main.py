@@ -14,11 +14,13 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 origins = [
+    "*",
     "http://localhost.tiangolo.com",
     "https://localhost.tiangolo.com",
     "http://localhost:3000",
     "http://localhost:8080",
-    "https://shellhacks22-frontend.herokuapp.com/*"
+    "https://shellhacks22-frontend.herokuapp.com/*",
+    
 ]
 
 app.add_middleware(
