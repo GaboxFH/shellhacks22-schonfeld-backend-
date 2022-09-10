@@ -14,8 +14,8 @@ print(DATABASE_URL)
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 # SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
 # postgresql://admin@name:password@name.postgres.database.azure.com:5432/postgres
-# SQLALCHEMY_DATABASE_URL = "postgresql://securiquery:sh3llHacks@securiquery.postgres.database.azure.com:5432/postgres"
-SQLALCHEMY_DATABASE_URL = DATABASE_URL
+SQLALCHEMY_DATABASE_URL = "postgresql://securiquery:sh3llHacks@securiquery.postgres.database.azure.com:5432/postgres"
+# SQLALCHEMY_DATABASE_URL = DATABASE_URL
 
 
 engine = create_engine(
