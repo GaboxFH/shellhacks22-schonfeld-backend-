@@ -59,6 +59,22 @@ def read_securities(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
     return securities
 
 
+@app.get("/api/securities/{root_symbol}", response_model=List[schemas.Security])
+def read_security(root_symbol: str, db: Session = Depends(get_db)):
+    securities = crud.get_security(db, root_symbol=root_symbol)
+    print (len(securities))
+    if securities is None:
+        raise HTTPException(status_code=404, detail="Security not found")
+    return securities
+
+# @app.get("/api/securities/{security_id}", response_model=List[schemas.Security])
+# def read_security(security_id: str, db: Session = Depends(get_db), limit: int = 100):
+#     securities = crud.get_security(db, security_id=security_id, limit=limit)
+#     if securities is None:
+#         raise HTTPException(status_code=404, detail="Security not found")
+#     return securities
+
+
 # @app.get("/api/securities/{security_id}", response_model=schemas.Security)
 # def read_security(security_id: str, db: Session = Depends(get_db)):
 #     db_security = crud.get_security(db, security_id=security_id)
@@ -67,12 +83,6 @@ def read_securities(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 #     return db_security
 
 
-@app.get("/api/securities/{security_id}", response_model=List[schemas.Security])
-def read_security(security_id: str, db: Session = Depends(get_db), limit: int = 100):
-    securities = crud.get_security(db, security_id=security_id, limit=limit)
-    if securities is None:
-        raise HTTPException(status_code=404, detail="Security not found")
-    return securities
 
 
 # @app.post("/users/{user_id}/items/", response_model=schemas.Item)
