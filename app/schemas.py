@@ -16,14 +16,10 @@ class SecurityBase(BaseModel):
     root_symbol: Union[str, None] = None
     bb_yellow: Union[str, None] = None
     spn: Union[str, None] = None
-
-    # title: str
-    # description: Union[str, None] = None
-
+    weight: Union[float, None] = None
 
 class SecurityCreate(SecurityBase):
     pass
-
 
 class Security(SecurityBase):
     security_id: str
@@ -31,24 +27,3 @@ class Security(SecurityBase):
 
     class Config:
         orm_mode = True
-
-
-
-
-# class ItemBase(BaseModel):
-#     title: str
-#     description: Union[str, None] = None
-
-
-# class ItemCreate(ItemBase):
-#     pass
-
-
-# class Item(ItemBase):
-#     id: int
-#     owner_id: int
-
-#     class Config:
-#         orm_mode = True
-
-

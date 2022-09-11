@@ -1,5 +1,5 @@
 from typing import List
-
+from difflib import SequenceMatcher
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -31,7 +31,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
 # Dependency
 def get_db():
     db = SessionLocal()
@@ -42,16 +41,27 @@ def get_db():
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return {"Hello": "Schonfeld"}
 
+def weight_results(securities, query):
+    query = query.upper()
 
-# @app.post("/users/", response_model=schemas.User)
-# def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-#     db_user = crud.get_user_by_email(db, email=user.email)
-#     if db_user:
-#         raise HTTPException(status_code=400, detail="Email already registered")
-#     return crud.create_user(db=db, user=user)
+    for record in securities:
+        weight_security_id = SequenceMatcher(None, str(record.security_id or ''), query).ratio()
+        weight_cusip = SequenceMatcher(None, str(record.cusip or ''), query).ratio()
+        weight_sedol = SequenceMatcher(None, str(record.sedol or ''), query).ratio()
+        weight_isin = SequenceMatcher(None, str(record.isin or ''), query).ratio()
+        weight_ric = SequenceMatcher(None, str(record.ric or ''), query).ratio()
+        weight_bloomberg = SequenceMatcher(None, str(record.bloomberg or ''), query).ratio()
+        weight_bbg = SequenceMatcher(None, str(record.bbg or ''), query).ratio()
+        weight_symbol = SequenceMatcher(None, str(record.symbol or ''), query).ratio()
+        weight_root_symbol = SequenceMatcher(None, str(record.root_symbol or ''), query).ratio()
+        weight_bb_yellow = SequenceMatcher(None, str(record.bb_yellow or ''), query).ratio()
+        weight_spn = SequenceMatcher(None, str(record.spn or ''), query).ratio()
 
+        weight_total = weight_security_id + weight_cusip + weight_sedol + weight_isin + weight_ric + weight_bloomberg + weight_bbg + weight_symbol + weight_root_symbol + weight_bb_yellow + weight_spn
+        record.weight = weight_total
+    return securities
 
 @app.get("/api/securities", response_model=List[schemas.Security])
 def read_securities(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -65,52 +75,6 @@ def read_security(root_symbol: str, db: Session = Depends(get_db), limit: int = 
     print (len(securities))
     if securities is None:
         raise HTTPException(status_code=404, detail="Security not found")
+    securities = weight_results(securities, root_symbol)
+    securities.sort(key=lambda x: x.weight, reverse = True)
     return securities
-
-# @app.get("/api/securities/{security_id}", response_model=List[schemas.Security])
-# def read_security(security_id: str, db: Session = Depends(get_db), limit: int = 100):
-#     securities = crud.get_security(db, security_id=security_id, limit=limit)
-#     if securities is None:
-#         raise HTTPException(status_code=404, detail="Security not found")
-#     return securities
-
-
-# @app.get("/api/securities/{security_id}", response_model=schemas.Security)
-# def read_security(security_id: str, db: Session = Depends(get_db)):
-#     db_security = crud.get_security(db, security_id=security_id)
-#     if db_security is None:
-#         raise HTTPException(status_code=404, detail="Security not found")
-#     return db_security
-
-
-
-
-# @app.post("/users/{user_id}/items/", response_model=schemas.Item)
-# def create_item_for_user(
-#     user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
-# ):
-#     return crud.create_user_item(db=db, item=item, user_id=user_id)
-
-
-# @app.get("/items/", response_model=List[schemas.Item])
-# def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-#     items = crud.get_items(db, skip=skip, limit=limit)
-#     return items
-
-
-
-# from typing import Union
-
-# from fastapi import FastAPI
-
-# app = FastAPI()
-
-
-# @app.get("/")
-# def read_root():
-#     return {"Hello": "World"}
-
-
-# @app.get("/items/{item_id}")
-# def read_item(item_id: int, q: Union[str, None] = None):
-#     return {"item_id": item_id, "q": q}
