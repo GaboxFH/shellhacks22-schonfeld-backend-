@@ -60,8 +60,8 @@ def read_securities(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
 
 
 @app.get("/api/securities/{root_symbol}", response_model=List[schemas.Security])
-def read_security(root_symbol: str, db: Session = Depends(get_db)):
-    securities = crud.get_security(db, root_symbol=root_symbol)
+def read_security(root_symbol: str, db: Session = Depends(get_db), limit: int = 500):
+    securities = crud.get_security(db, root_symbol=root_symbol, limit=limit)
     print (len(securities))
     if securities is None:
         raise HTTPException(status_code=404, detail="Security not found")

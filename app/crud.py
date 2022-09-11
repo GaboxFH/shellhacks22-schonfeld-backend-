@@ -8,7 +8,7 @@ def get_securities(db: Session, skip: int = 0, limit: int = 100 ):
     return db.query(models.Security).offset(skip).limit(limit).all()
 
 
-def get_security(db: Session, root_symbol : str):
+def get_security(db: Session, root_symbol : str,  limit: int = 100):
     # return db.query(models.Security).filter(models.Security.security_id == security_id).first()
     return db.query(models.Security).filter(
         or_(
@@ -24,7 +24,7 @@ def get_security(db: Session, root_symbol : str):
         models.Security.bb_yellow.ilike('%{}%'.format(root_symbol)),
         models.Security.spn.ilike('%{}%'.format(root_symbol)),
         )
-        ).all()
+        ).limit(limit).all()
 
 
 # def get_security(db: Session, security_id : str, limit: int = 100):
